@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'NikkyouSans-mLKax';
+    src: url(" /font/NikkyouSans-mLKax.ttf ");
+
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    /* font-weight: bold; */
+    font-family: 'NikkyouSans-mLKax';
+}
