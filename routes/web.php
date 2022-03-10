@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ItineratyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,7 +18,7 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::post('/', [RequestController::class, 'store'])->name('request');
+Route::post('/', [ItineratyController::class, 'store'])->name('request');
 
 Auth::routes();
 
@@ -29,10 +29,10 @@ Auth::routes();
 // });
 // Route::get()
 //accebility routes for admins
-// Route::group(['middleware' => ['role:admin']], function () {
-//     // vehicles
-//     Route::get('/admin/vehicles/list', [VehicleController::class, 'adminVeh'])->name('vehicle.list');
-//     Route::post('/admin/vehicles/list', [VehicleController::class, 'search'])->name('vehicle.search');
+Route::group(['middleware' => ['role:admin']], function () {
+    // itineraties
+    Route::get('/admin/itineraties/list', [ItineratyController::class, 'show'])->name('itineraty.list');
+    // Route::post('/admin/itineraties/list', [ItineratyController::class, 'search'])->name('itineraty.search');
 //     Route::get('/admin/vehicles/create', [VehicleController::class, 'create'])->name('vehicle.create');
 //     Route::post('/admin/vehicles/create', [VehicleController::class, 'store'])->name('vehicle.store');
 //     Route::get('/admin/vehicles/edit/{vehicle}', [VehicleController::class, 'edit'])->name('vehicle.edit');
@@ -60,6 +60,6 @@ Auth::routes();
 //     Route::get('/admin/penalties/edit/{penalty}', [PenaltyController::class, 'edit'])->name('penalty.edit');
 //     Route::post('/admin/penalties/edit/{penalty}', [PenaltyController::class, 'update'])->name('penalty.update');
 //     Route::delete('/admin/penalties/delete/{penalty}', [PenaltyController::class, 'destroyer'])->name('penalty.destroy');
-// });
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -89,6 +89,12 @@
                 timer: 2000
                 })
             @endif
+            @if (session('error') == 'notship')
+                Swal.fire('You must registrer a ship!');
+            @endif
+            @if (session('error') == 'bayfull')
+                Swal.fire('Sorry the bay is full try it later!');
+            @endif
             @if (session('error') == 'lessdate')
                 Swal.fire('You must set a date that its greather!');
             @endif

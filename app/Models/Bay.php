@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Bay extends Model
 {
     use HasFactory;
+    protected $fillable = ["available"];
 }

@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->foreign('itinerary_id')
                 ->references('id')
-                ->on('itinerates')
+                ->on('itineraties')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });
