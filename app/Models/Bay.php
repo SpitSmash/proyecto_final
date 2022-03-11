@@ -9,4 +9,9 @@ class Bay extends Model
 {
     use HasFactory;
     protected $fillable = ["available"];
+
+    public function itineraty()
+    {
+        return $this->belongsTo(Itineraty::class);
+    } 
 }

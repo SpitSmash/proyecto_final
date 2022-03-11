@@ -1,19 +1,58 @@
 @extends('layouts.app')
 
+@section('css')
+    <style>
+        #requestButton {
+            font-size: 7.4rem;
+        }
+
+        .userActions {
+            font-size: 2rem;
+        }
+
+        .row {
+            margin-top: 2rem;
+        }
+
+        #to {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #dropoffBase {
+            cursor: default;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+
+    </style>
+@endsection
+
 @section('content')
     <div class="container">
         <form method="POST" action="{{ route('request') }}">
             @csrf
             <div class="row">
-                <button type="submit" class="btn btn-success col-12" style="font-size: 130px;">
-                    Request Landing
-                </button>
+                @if($requested == "none")
+                    <button type="submit" id="requestButton" class="btn btn-success col-12">
+                        Request Landing
+                    </button>
+                @else
+                    <button type="button" id="requestButton" class="btn btn-success col-12" disabled>
+                        Request Landing
+                    </button>
+                @endif
+                
             </div>
-            <div class="row" style="margin-top: 15px">
-                <div class="col-4"></div>
-                <div class="col-4">
-                    <div class="btn btn-warning">
-                        <input class="form-control" style="padding: 10px" type="text" id="to" name="to">
+            <div class="row">
+                @if($requested == "none")
+                <div class="col-5"></div>
+                <div class="col-2">
+                    <div class="btn btn-warning" id="dropoffBase">
+                        <input class="form-control" type="text" id="to" name="to">
                         <select name="dropoffTime" id="dropoffTimeSelect">
                             <option value="00:00">00:00</option>
                             <option value="00:30">00:30</option>
@@ -76,34 +115,108 @@
                     </div>
                 </div>
                 <div class="col-4"></div>
+                @endif
+                
             </div>
         </form>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            @if (session('success') == 'request')
-                Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Request Successfully!',
-                showConfirmButton: false,
-                timer: 2000
-                })
+        <div class="row">
+            @if($requested == "accepted")
+                <div class="col-3"></div>
+                /* Bases
+                    <div class="col-3">
+                        <a class="btn btn-outline-primary col-12 userActions"> ATERRIZAR </a>
+                    </div>
+                    <div class="col-3">
+                        <a class="btn btn-outline-primary col-12 userActions"> DESPEGAR </a>
+                    </div>
+
+                    <div class="col-3">
+                        <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> ATERRIZAR </a>
+                    </div>
+
+                    <div class="col-3">
+                        <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> DESPEGAR </a>
+                    </div>
+                */
+                @if($requested != "landed")
+                    <div class="col-3">
+                        <a class="btn btn-outline-primary col-12 userActions"> ATERRIZAR </a>
+                    </div>
+                    <div class="col-3">
+                        <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> DESPEGAR </a>
+                    </div>
+                @else
+                <div class="col-3">
+                    <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> ATERRIZAR </a>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-outline-primary col-12 userActions"> DESPEGAR </a>
+                </div>
+                @endif
+                
             @endif
-            @if (session('error') == 'notship')
-                Swal.fire('You must registrer a ship!');
-            @endif
-            @if (session('error') == 'bayfull')
-                Swal.fire('Sorry the bay is full try it later!');
-            @endif
-            @if (session('error') == 'lessdate')
-                Swal.fire('You must set a date that its greather!');
-            @endif
-            @if (session('error') == 'datempy')
-                Swal.fire('You must set a takeoff date!');
-            @endif
-            @if (session('error') == 'difrole')
-                Swal.fire('You must login with client!');
-            @endif
-        </script>
+
+
+        </div>
+
+        <div class="row">
+            <div class="ratio ratio-16x9">
+                <video width="800" height="380" autoplay="autoplay" loop="loop" controls="controls" muted="muted">
+                    <source src="{{ asset('video/OrisonLandingZon.webm') }}" type="video/webm">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+        
+
+
     </div>
+@endsection
+
+@section('footer')
+    @include('layouts.footer')
+@endsection
+
+@section('js')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('success') == 'request')
+            Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Request Successfully!',
+            showConfirmButton: false,
+            timer: 2000
+            })
+        @endif
+        @switch(session('error'))
+        @case('notship'):
+            Swal.fire('You must registrer a ship!');
+        @break
+
+        ;
+        @case('bayfull'):
+            Swal.fire('Sorry the bay is full try it later!');
+        2
+        break;
+        @case('lessdate'):
+            Swal.fire('You must set a date that its greather!');
+        @break
+
+        ;
+        @case('datempy'):
+            Swal.fire('You must set a takeoff date!');
+        @break
+
+        ;
+        @case('difrole'):
+            Swal.fire('You must be a client!');
+        @break
+
+        ;
+
+        default:
+        break;
+        @endswitch
+    </script>
 @endsection

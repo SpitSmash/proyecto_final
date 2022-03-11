@@ -47,9 +47,7 @@ class ItineratyController extends Controller
                         'status' => 'pending',
                     ]);
 
-                    $bay->update([
-                        'available' => 0,
-                    ]);
+                    
 
                     return redirect(url('/'))->with('success', 'request');
                 } else {
@@ -61,5 +59,49 @@ class ItineratyController extends Controller
             // dd($request->to);
         }
         return redirect(url('/'))->with('error', 'difrole');
+    }
+
+    public function edit(Itineraty $itineraty)
+    {
+        // dd($vehicle);
+        return view('admin.itineraties.edit', compact('itineraty'));
+    }
+
+    public function update(Request $request, Itineraty $itineraty){
+        // dd($itineraty);
+        $itineraty->update($request->all());
+        if($request->status == 'accepted'){
+            // dd($request->status);
+            $bay = Bay::where("available", 1)->first();
+            $bay->update([
+                'available' => 0,
+            ]);
+            $today = Carbon::createFromFormat('m/d/Y H:i', date('m/d/Y H:i'));
+            $date_estimated_landing = $today->addMinutes(10);
+            $itineraty->update([
+                'date_estimated_landing'=>$date_estimated_landing,
+            ]);
+        }
+        $itineraties = Itineraty::all();
+        return view('/admin/itineraties/list', compact('itineraties'));
+    }
+
+    public function search(Request $request)
+    {
+        // dd($request->search);
+        if ($request->search != null) {
+            $id = Ship::where("name", "LIKE", "%{$request->get('search')}%")->first('id');
+            // dd($id->id);
+            $itineraties = Itineraty::where("ship_id", "=", $id->id)->paginate(10);
+            // dd($rents);
+            return view('admin.itineraties.list', compact('itineraties'));
+        }
+        return back();
+    }
+
+    public function destroyer(Itineraty $itineraty)
+    {
+        $itineraty->delete();
+        return redirect(route('itineraty.list'))->with('delete', 'ok');
     }
 }

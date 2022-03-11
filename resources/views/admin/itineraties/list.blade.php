@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1>RENTINGS</h1>
+        <h1>Itineraties</h1>
         <div style="max-width: 30%; float: left;">
             <form class="d-flex" method="POST" action="">
                 @csrf
@@ -17,7 +17,7 @@
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Ship ID</th>
+                        <th scope="col">Ship Name</th>
                         <th scope="col">Bay ID</th>
                         <th scope="col">Status</th>
                         <th scope="col">Date Estimated TakeOff</th>
@@ -32,7 +32,7 @@
                     @foreach ($itineraties as $itineraty)
                         <tr>
                             <th scope="row">{{ $itineraty->id }}</th>
-                            <td>{{ $itineraty->ship_id }}</td>
+                            <td>{{ $itineraty->ship->name }}</td>
                             <td>{{ $itineraty->bay_id }}</td>
                             <td>{{ $itineraty->status }}</td>
                             <td>{{ $itineraty->date_estimated_takeoff }}</td>
@@ -42,7 +42,7 @@
                             <td>{{ $itineraty->cost }}</td>
                             <td></td>
                             <td>
-                                <a href="">
+                                <a href="{{ url('admin/itineraties/edit/' . $itineraty->id) }}">
                                     <button type="button" class="btn btn-outline-warning">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                             class="bi bi-pen-fill" viewBox="0 0 16 16">
@@ -57,7 +57,7 @@
                             <td>
                                 <a href="">
                                     <form method="POST" class="form-delete"
-                                        action="">
+                                        action="{{ route('itineraty.destroy', $itineraty->id) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger">
@@ -86,7 +86,7 @@
             </table>
         </div>
         <div class="d-flex col-12 justify-content-center">
-            
+
         </div>
     </div>
 @endsection

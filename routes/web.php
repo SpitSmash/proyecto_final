@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ItineratyController;
+use App\Models\Itineraty;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +17,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
+    if (Auth::user() == null) {
+        return view('index', ['requested' => 'none']);
+        
+    } else if (Auth::user()->hasRole('client')) {
+        // Revisa si tiene itinerarios pending, aceptados y landed, NO BUSCA DENEGADOS NI DESPEGADOS
+        // Necesita buscar el itinerario a través de la ID de su nave
+
+        /* Ligera idea, pero confuso af, sabado se hace
+        Itineraty::where('ship_id', function ($join) {
+            $join->on('ships.id', '=', Auth::user()->id);
+        });
+        */
+
+        // Devolvería el respectivo estado, si es null, devuelve none
+        return view('index', ['requested' => 'none']);
+    } else {
+        return view('index', ['requested' => 'none']);
+    }
+    
 });
 
 Route::post('/', [ItineratyController::class, 'store'])->name('request');
@@ -32,12 +52,12 @@ Auth::routes();
 Route::group(['middleware' => ['role:admin']], function () {
     // itineraties
     Route::get('/admin/itineraties/list', [ItineratyController::class, 'show'])->name('itineraty.list');
-    // Route::post('/admin/itineraties/list', [ItineratyController::class, 'search'])->name('itineraty.search');
+    Route::post('/admin/itineraties/list', [ItineratyController::class, 'search'])->name('itineraty.search');
 //     Route::get('/admin/vehicles/create', [VehicleController::class, 'create'])->name('vehicle.create');
 //     Route::post('/admin/vehicles/create', [VehicleController::class, 'store'])->name('vehicle.store');
-//     Route::get('/admin/vehicles/edit/{vehicle}', [VehicleController::class, 'edit'])->name('vehicle.edit');
-//     Route::post('/admin/vehicles/edit/{vehicle}', [VehicleController::class, 'update'])->name('vehicle.update');
-//     Route::delete('/admin/vehicles/delete/{vehicle}', [VehicleController::class, 'destroyer'])->name('vehicle.destroy');
+    Route::get('/admin/itineraties/edit/{itineraty}', [ItineratyController::class, 'edit'])->name('itineraty.edit');
+    Route::post('/admin/itineraties/edit/{itineraty}', [ItineratyController::class, 'update'])->name('itineraty.update');
+    Route::delete('/admin/itineraties/delete/{itineraty}', [ItineratyController::class, 'destroyer'])->name('itineraty.destroy');
 
 //     // users
 //     Route::get('/admin/users/list', [UserController::class, 'adminUser'])->name('user.list');
