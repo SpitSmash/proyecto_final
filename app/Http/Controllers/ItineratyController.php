@@ -47,8 +47,6 @@ class ItineratyController extends Controller
                         'status' => 'pending',
                     ]);
 
-                    
-
                     return redirect(url('/'))->with('success', 'request');
                 } else {
                     return redirect(url('/'))->with('error', 'datempy');

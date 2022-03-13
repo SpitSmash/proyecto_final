@@ -53,16 +53,16 @@
                         @else
                             @if(@Auth::user()->hasRole('admin'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Itineraties</a>
+                                    <a class="nav-link" href="{{route('itineraty.list')}}">Itineraties</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Users</a>
+                                    <a class="nav-link" href="{{route('user.list')}}">Users</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Ships</a>
+                                    <a class="nav-link" href="{{route('ship.list')}}">Ships</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Bays</a>
+                                    <a class="nav-link" href="{{route('bay.list')}}">Bays</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="">Penalties</a>
@@ -105,10 +105,10 @@
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 @if(@Auth::user()->hasRole('admin'))
                                     <span class="dropdown-header">Management</span>
-                                    <a class="dropdown-item" href="">Itineraties</a>
-                                    <a class="dropdown-item" href="">Users</a>
-                                    <a class="dropdown-item" href="">Ships</a>
-                                    <a class="dropdown-item" href="">Bays</a>
+                                    <a class="dropdown-item" href="{{route('itineraty.list')}}">Itineraties</a>
+                                    <a class="dropdown-item" href="{{route('user.list')}}">Users</a>
+                                    <a class="dropdown-item" href="{{route('ship.list')}}">Ships</a>
+                                    <a class="dropdown-item" href="{{route('bay.list')}}">Bays</a>
                                     <a class="dropdown-item" href="">Penalties</a>
                                     <span><hr class="dropdown-divider"></span>
                                     <span class="dropdown-header">User Actions</span>
