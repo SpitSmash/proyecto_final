@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ShipController;
 use App\Http\Controllers\BayController;
 use App\Models\Itineraty;
+use App\Models\Ship;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,9 +23,8 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     if (Auth::user() == null) {
         return view('index', ['requested' => 'notLogged']);
-        
     } else if (Auth::user()->hasRole('client')) {
-        
+
         // Revisa si tiene itinerarios pending, aceptados y landed, NO BUSCA DENEGADOS NI DESPEGADOS
         // Necesita buscar el itinerario a través de la ID de su nave
 
@@ -32,16 +32,23 @@ Route::get('/', function () {
         // (itineraties.status LIKE 'pending' OR itineraties.status LIKE 'accepted' OR itineraties.status LIKE 'landed' 
         // AND itineraties.ship_id = (SELECT user_id FROM ships WHERE user_id = '1'));
 
-        
-        $itineraryValue = Itineraty::whereRaw('status LIKE "pending" OR status LIKE "accepted" OR status LIKE "landed" AND itineraties.ship_id = ' . Auth::user()->id)->first();
-        $status = ($itineraryValue != null) ? $itineraryValue->status : 'none';
-        
+        $ship_id = Ship::where('user_id', Auth::user()->id)->first();
+        if($ship_id != null){
+            $itineraryValue = Itineraty::where('ship_id', $ship_id->id)->where(function ($query) {
+                $query->where('status', 'pending')
+                    ->orWhere('status', 'accepted')
+                    ->orWhere('status', 'landed');
+            })->first();
+
+            $status = ($itineraryValue != null) ? $itineraryValue->status : 'none';
+        } else {
+            $status = 'none';
+        }
+
         return view('index', ['requested' => $status]);
-        dd($status);
     } else {
         return view('index', ['requested' => 'none']);
     }
-    
 });
 
 Route::post('/', [ItineratyController::class, 'store'])->name('request');
@@ -91,7 +98,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('/admin/bays/edit/{bay}', [BayController::class, 'edit'])->name('bay.edit');
     Route::post('/admin/bays/edit/{bay}', [BayController::class, 'update'])->name('bay.update');
     Route::delete('/admin/bays/delete/{bay}', [BayController::class, 'destroyer'])->name('bay.destroy');
-    
+
     //     // rentings
     //     Route::get('/admin/rentings/list', [RentController::class, 'adminRent'])->name('rent.list');
     //     Route::post('/admin/rentings/list', [RentController::class, 'search'])->name('rent.search');

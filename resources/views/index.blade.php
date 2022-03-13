@@ -32,6 +32,7 @@
 
 @section('content')
 <div class="container">
+    {{ $requested }}
     <form method="POST" action="{{ route('request') }}">
         @csrf
         <div class="row">
@@ -116,23 +117,23 @@
         </div>
     </form>
     <div class="row">
-        @if ($requested == 'accepted' || 'landed')
         <div class="col-3"></div>
-        @if ($requested != 'landed')
+
+        @if ($requested == 'accepted' )
         <div class="col-3">
             <a class="btn btn-outline-primary col-12 userActions"> ATERRIZAR </a>
         </div>
         <div class="col-3">
             <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> DESPEGAR </a>
         </div>
-        @else
+        @endif
+        @if ($requested == 'landed' )
         <div class="col-3">
             <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> ATERRIZAR </a>
         </div>
         <div class="col-3">
             <a class="btn btn-outline-primary col-12 userActions"> DESPEGAR </a>
         </div>
-        @endif
         @endif
 
 
