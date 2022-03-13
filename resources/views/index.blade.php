@@ -32,7 +32,6 @@
 
 @section('content')
 <div class="container">
-    {{ $requested }}
     <form method="POST" action="{{ route('request') }}">
         @csrf
         <div class="row">
