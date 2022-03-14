@@ -18,7 +18,7 @@ return new class extends Migration
             $table->float('price');
             $table->longText('comments');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('itinerary_id')->nullable();
+            $table->unsignedBigInteger('itineraty_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')
@@ -27,7 +27,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreign('itinerary_id')
+            $table->foreign('itineraty_id')
                 ->references('id')
                 ->on('itineraties')
                 ->onUpdate('cascade')

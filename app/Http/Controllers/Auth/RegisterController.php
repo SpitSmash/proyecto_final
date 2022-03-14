@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ship;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller
 {
@@ -53,6 +55,13 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+
+            'ship_name' => ['required', 'string', 'max:255'],
+            'ship_description' => ['required', 'string', 'max:255'],
+            'ship_type' => ['required', 'string', 'max:255'],
+            'ship_status' => ['required', 'string', 'max:255'],
+            // 'ship_image' => ['required', 'image', 'max:2048'],
+
         ]);
     }
 
@@ -64,6 +73,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // $image = $data['ship_image']->file('image')->store('public/images');
+        // $url = Storage::url($image);
+
+        Ship::create([
+            'name' => $data['ship_name'],
+            'description' => $data['ship_description'],
+            'type' => $data['ship_type'],
+            'status' => $data['ship_status'],
+            // 'image' => $url,
+        ]);
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

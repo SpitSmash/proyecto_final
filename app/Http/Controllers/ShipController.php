@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ship;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ShipController extends Controller
 {
@@ -21,12 +21,18 @@ class ShipController extends Controller
 
     public function store(Request $request)
     {
-        $nameImage = "";
+        // $nameImage = "";
         // dd($request->hasFile("image"));
-        if ($request->hasFile("image")) {
-            $request->file('image')->store('public');
-            $nameImage = $request->file('image')->store('public');
-        }
+        // if ($request->hasFile("image")) {
+        //     $request->file('image')->store('public');
+        //     $nameImage = $request->file('image')->store('public');
+        // }
+
+        $request->validate([
+            'image' => 'required|image|max:2048',
+        ]);
+        $image = $request->file('image')->store('public/images');
+        $url = Storage::url($image);
 
         Ship::create([
             'name' => $request->name,
@@ -34,7 +40,7 @@ class ShipController extends Controller
             'description' => $request->description,
             'type' => $request->type,
             'status' => $request->status,
-            'image' => $nameImage,
+            'image' => $url,
         ]);
         return redirect(route('ship.list'));
     }
@@ -46,9 +52,32 @@ class ShipController extends Controller
 
     public function update(Request $request, Ship $ship)
     {
-
-        $ship->update($request->all());
-        return redirect(route('ship.list'));
+        if ($request->image != null) {
+            $request->validate([
+                'image' => 'required|image|max:2048',
+            ]);
+            $image = $request->file('image')->store('public/images');
+            $url = Storage::url($image);
+            $ship->update([
+                'name' => $request->name,
+                'user_id' => $request->user_id,
+                'description' => $request->description,
+                'type' => $request->type,
+                'status' => $request->status,
+                'image' => $url,
+            ]);
+            return redirect(route('ship.list'));
+        } else {
+            $ship->update([
+                'name' => $request->name,
+                'user_id' => $request->user_id,
+                'description' => $request->description,
+                'type' => $request->type,
+                'status' => $request->status,
+                'image' => $request->oldImage,
+            ]);
+            return redirect(route('ship.list'));
+        }
     }
 
     public function destroyer(Ship $ship)

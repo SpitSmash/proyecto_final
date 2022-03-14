@@ -21,7 +21,7 @@ return new class extends Migration
             $table->datetime('date_landing')->nullable();
             $table->datetime('date_estimated_landing')->nullable();
             $table->string('status', 50)->nullable();
-            $table->float('cost')->default(0)->nullable();
+            $table->float('price')->default(0)->nullable();
             $table->unsignedBigInteger('ship_id')->nullable();
             $table->unsignedBigInteger('bay_id')->nullable();
             $table->timestamps();

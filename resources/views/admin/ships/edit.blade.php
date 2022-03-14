@@ -22,10 +22,15 @@
                     <label for="status">Status:</label>
                     <input type="text" id="status" name="status" value="{{ $ship->status }}">
                 </div>
-                
+
                 <div>
-                    <label for="image">Image:</label>
-                    <input type="file" id="image" name="image" required>
+                    <label for="image">Image</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <input type="hidden" id="oldImage" name="oldImage" value="{{ $ship->image }}">
+                    <br/>
+                    @error('image')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
 
                 <div>

@@ -26,7 +26,11 @@
 
             <div>
                 <label for="image">Image</label>
-                <input type="file" id="image" name="image" required>
+                <input type="file" id="image" name="image" accept="image/*" required>
+                <br/>
+                @error('image')
+                    <small class="text-danger" >{{ $message }}</small>
+                @enderror
             </div>
 
             <div>

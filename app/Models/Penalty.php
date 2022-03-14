@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Penalty extends Model
 {
     use HasFactory;
+    protected $fillable = ["price", "comments", "user_id", "itineraty_id"];
 
     public function itineraty()
     {

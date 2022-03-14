@@ -5,9 +5,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ShipController;
 use App\Http\Controllers\BayController;
 use App\Models\Itineraty;
-use App\Models\Ship;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Ship;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ Route::get('/', function () {
         // AND itineraties.ship_id = (SELECT user_id FROM ships WHERE user_id = '1'));
 
         $ship_id = Ship::where('user_id', Auth::user()->id)->first();
-        if($ship_id != null){
+        if ($ship_id != null) {
             $itineraryValue = Itineraty::where('ship_id', $ship_id->id)->where(function ($query) {
                 $query->where('status', 'pending')
                     ->orWhere('status', 'accepted')
@@ -55,19 +55,21 @@ Route::post('/', [ItineratyController::class, 'store'])->name('request');
 
 Auth::routes();
 
-// Route::group(['middleware' => ['role:client']], function () {
+Route::group(['middleware' => ['role:client']], function () {
+
 //     Route::post('/content-layout/form', [RentController::class, 'store'])->name('form-rent');
 //     Route::get('/content-layout/acknowledge', [RentController::class, 'index'])->name('acknowledge');
 //     Route::get('/content-layout/my-list-rents', [RentController::class, 'myRents'])->name('my-rents');
-// });
+    Route::get('index', [ItineratyController::class, 'landing'])->name('landing');
+});
 // Route::get()
 //accebility routes for admins
 Route::group(['middleware' => ['role:admin']], function () {
     // itineraties
     Route::get('/admin/itineraties/list', [ItineratyController::class, 'show'])->name('itineraty.list');
     Route::post('/admin/itineraties/list', [ItineratyController::class, 'search'])->name('itineraty.search');
-    //     Route::get('/admin/vehicles/create', [VehicleController::class, 'create'])->name('vehicle.create');
-    //     Route::post('/admin/vehicles/create', [VehicleController::class, 'store'])->name('vehicle.store');
+    Route::get('/admin/itineraties/create', [ItineratyController::class, 'create'])->name('itineraty.create');
+    Route::post('/admin/itineraties/create', [ItineratyController::class, 'store'])->name('itineraty.store');
     Route::get('/admin/itineraties/edit/{itineraty}', [ItineratyController::class, 'edit'])->name('itineraty.edit');
     Route::post('/admin/itineraties/edit/{itineraty}', [ItineratyController::class, 'update'])->name('itineraty.update');
     Route::delete('/admin/itineraties/delete/{itineraty}', [ItineratyController::class, 'destroyer'])->name('itineraty.destroy');

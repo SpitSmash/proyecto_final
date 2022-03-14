@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -17,9 +18,16 @@ class UserController extends Controller
     }
 
     public function store(Request $request){
+        $request->validate([
+            'image' => 'required|image|max:2048',
+        ]);
+        $image = $request->file('image')->store('public/images');
+        $url = Storage::url($image);
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'image' => $url,
             'password' => bcrypt($request->password),
         ])->assignRole('client');
         // $request['password']=bcrypt($request['password']);

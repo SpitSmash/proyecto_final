@@ -34,7 +34,7 @@
                             <td>{{ $ship->type }}</td>
                             <td>{{ $ship->description }}</td>
                             <td>{{ $ship->status }}</td>
-                            <td>{{ $ship->image }}</td>
+                            <td><img src="{{ URL::asset($ship->image) }}" alt=""></td>
                             <td>
                                 <a href="{{ url('admin/ships/edit/' . $ship->id) }}">
                                     <button type="button" class="btn btn-outline-warning">

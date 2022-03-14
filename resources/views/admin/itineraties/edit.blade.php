@@ -24,14 +24,9 @@
                     <input type="text" id="date_estimated_landing" name="date_estimated_landing" value="{{ $itineraty->date_estimated_landing }}">
                 </div>
 
-                {{-- <div>
-                    <label for="date_give">Date Give:</label>
-                    <input type="text" id="date_give" name="date_give" value="{{ $itineraty->date_give }}">
-                    <label>Actual Time: <?= date('Y-m-d h:i:s') ?> </label>
-                </div> --}}
                 <div>
-                    <label for="cost">Cost:</label>
-                    <input type="text" id="cost" name="cost" value="{{ $itineraty->cost }}">
+                    <label for="price">Price:</label>
+                    <input type="text" id="price" name="price" value="{{ $itineraty->price }}">
                 </div>
 
                 <div>
