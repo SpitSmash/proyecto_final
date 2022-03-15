@@ -65,17 +65,17 @@
                                     <a class="nav-link" href="{{route('bay.list')}}">Bays</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Penalties</a>
+                                    <a class="nav-link" href="{{route('penalty.list')}}">Penalties</a>
                                 </li>
                             @else
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Itineraties</a>
+                                    <a class="nav-link" href="{{route('client.itineraty')}}">Itineraties</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Ship</a>
+                                    <a class="nav-link" href="{{route('client.ship')}}">Ship</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Penalties</a>
+                                    <a class="nav-link" href="{{route('client.penalty')}}">Penalties</a>
                                 </li>
                             @endif
                         @endguest
@@ -131,7 +131,7 @@
                 </div>
             </div>
         </nav>
-
+        
         <main>
             @yield('content')
             @yield('footer')

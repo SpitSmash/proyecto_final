@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Ship;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ShipController extends Controller
 {
@@ -21,13 +22,7 @@ class ShipController extends Controller
 
     public function store(Request $request)
     {
-        // $nameImage = "";
-        // dd($request->hasFile("image"));
-        // if ($request->hasFile("image")) {
-        //     $request->file('image')->store('public');
-        //     $nameImage = $request->file('image')->store('public');
-        // }
-
+       
         $request->validate([
             'image' => 'required|image|max:2048',
         ]);
@@ -93,5 +88,10 @@ class ShipController extends Controller
             return view('admin.ships.list', compact('ships'));
         }
         return back();
+    }
+
+    public function showClient(){
+        $ships = Ship::where("user_id", Auth::user()->id)->paginate(10);
+        return view('client.ships.list', compact('ships'));
     }
 }

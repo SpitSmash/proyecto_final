@@ -4,6 +4,7 @@ use App\Http\Controllers\ItineratyController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ShipController;
 use App\Http\Controllers\BayController;
+use App\Http\Controllers\PenaltyController;
 use App\Models\Itineraty;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -55,14 +56,16 @@ Route::post('/', [ItineratyController::class, 'store'])->name('request');
 
 Auth::routes();
 
+//accebility routes for clients
 Route::group(['middleware' => ['role:client']], function () {
 
-//     Route::post('/content-layout/form', [RentController::class, 'store'])->name('form-rent');
-//     Route::get('/content-layout/acknowledge', [RentController::class, 'index'])->name('acknowledge');
-//     Route::get('/content-layout/my-list-rents', [RentController::class, 'myRents'])->name('my-rents');
+    Route::get('/client/itineraties/list', [ItineratyController::class, 'showClient'])->name('client.itineraty');
+    Route::get('/client/ships/list', [ShipController::class, 'showClient'])->name('client.ship');
+    Route::get('/client/penalties/list', [PenaltyController::class, 'showClient'])->name('client.penalty');
     Route::get('index', [ItineratyController::class, 'landing'])->name('landing');
+    Route::get('index/takeoff', [ItineratyController::class, 'takeoff'])->name('takeoff');
 });
-// Route::get()
+
 //accebility routes for admins
 Route::group(['middleware' => ['role:admin']], function () {
     // itineraties
@@ -101,19 +104,14 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::post('/admin/bays/edit/{bay}', [BayController::class, 'update'])->name('bay.update');
     Route::delete('/admin/bays/delete/{bay}', [BayController::class, 'destroyer'])->name('bay.destroy');
 
-    //     // rentings
-    //     Route::get('/admin/rentings/list', [RentController::class, 'adminRent'])->name('rent.list');
-    //     Route::post('/admin/rentings/list', [RentController::class, 'search'])->name('rent.search');
-    //     Route::get('/admin/rentings/edit/{rent}', [RentController::class, 'edit'])->name('rent.edit');
-    //     Route::post('/admin/rentings/edit/{rent}', [RentController::class, 'update'])->name('rent.update');
-    //     Route::delete('/admin/rentings/delete/{rent}', [RentController::class, 'destroyer'])->name('rent.destroy');
-
     //     // penalties
-    //     Route::get('/admin/penalties/list', [PenaltyController::class, 'show'])->name('penalty.list');
-    //     Route::post('/admin/penalties/list', [PenaltyController::class, 'search'])->name('penalty.search');
-    //     Route::get('/admin/penalties/edit/{penalty}', [PenaltyController::class, 'edit'])->name('penalty.edit');
-    //     Route::post('/admin/penalties/edit/{penalty}', [PenaltyController::class, 'update'])->name('penalty.update');
-    //     Route::delete('/admin/penalties/delete/{penalty}', [PenaltyController::class, 'destroyer'])->name('penalty.destroy');
+    Route::get('/admin/penalties/list', [PenaltyController::class, 'show'])->name('penalty.list');
+    Route::post('/admin/penalties/list', [PenaltyController::class, 'search'])->name('penalty.search');
+    Route::get('/admin/penalties/create', [PenaltyController::class, 'create'])->name('penalty.create');
+    Route::post('/admin/penalties/create', [PenaltyController::class, 'store'])->name('penalty.store');
+    Route::get('/admin/penalties/edit/{penalty}', [PenaltyController::class, 'edit'])->name('penalty.edit');
+    Route::post('/admin/penalties/edit/{penalty}', [PenaltyController::class, 'update'])->name('penalty.update');
+    Route::delete('/admin/penalties/delete/{penalty}', [PenaltyController::class, 'destroyer'])->name('penalty.destroy');
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

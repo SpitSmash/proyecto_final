@@ -50,7 +50,7 @@
                 @if ($requested == 'none')
                     <div class="col-5"></div>
                     <div class="col-2">
-                        <div class="btn btn-warning" id="dropoffBase">
+                        <div class="btn btn-primary" id="dropoffBase">
                             <input class="form-control" type="text" id="to" name="to">
                             <select name="dropoffTime" id="dropoffTimeSelect">
                                 <option value="00:00">00:00</option>
@@ -120,7 +120,6 @@
         </form>
         <div class="row">
             <div class="col-3"></div>
-
             @if ($requested == 'accepted')
                 <div class="col-3">
                     <a class="btn btn-outline-primary col-12 userActions" href="{{ route('landing') }}"> LANDING </a>
@@ -134,11 +133,9 @@
                     <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> LANDING </a>
                 </div>
                 <div class="col-3">
-                    <a class="btn btn-outline-primary col-12 userActions"> TAKEOFF </a>
+                    <a class="btn btn-outline-primary col-12 userActions" href="{{ route('takeoff') }}"> TAKEOFF </a>
                 </div>
             @endif
-
-
         </div>
 
         <div class="row">
@@ -162,43 +159,72 @@
 @section('js')
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        @if (session('success') == 'request')
+        {{ session('success') }}
+        @switch(session('success'))
+        @case('request'):
             Swal.fire({
-            position: 'top-end'
-            , icon: 'success'
-            , title: 'Request Successfully!'
-            , showConfirmButton: false
-            , timer: 2000
+                position: 'top-end',
+                icon: 'success',
+                title: 'Request Successfully!',
+                showConfirmButton: false,
+                timer: 2000
             })
-        @endif
+        @break
+
+        @case('landing'):
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Landed Successfully!',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        @break
+
+        @case('takeoff'):
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Takeoff Successfully!',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        @break
+        @endswitch
+
+        {{ session('error') }}
         @switch(session('error'))
         @case('notship'):
             Swal.fire('You must registrer a ship!');
         @break
 
-        ;
         @case('bayfull'):
             Swal.fire('Sorry the bay is full try it later!');
-        2
-        break;
+        @break
+
         @case('lessdate'):
             Swal.fire('You must set a date that its greather!');
         @break
 
-        ;
-        @case('datempy'):
+        @case('dateempty'):
             Swal.fire('You must set a takeoff date!');
         @break
 
-        ;
         @case('difrole'):
             Swal.fire('You must be a client!');
         @break
 
-        ;
+        @case('notship'):
+            Swal.fire('You must registrer a ship!');
+        @break
 
-        default:
-        break;
+        @case('landingPenalty'):
+            Swal.fire('You must set a date that its greather!');
+        @break
+
+        @case('takeoffPenalty'):
+            Swal.fire('You must be a client!');
+        @break
         @endswitch
     </script>
 @endsection

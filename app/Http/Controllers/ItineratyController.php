@@ -58,7 +58,7 @@ class ItineratyController extends Controller
 
                     return redirect(url('/'))->with('success', 'request');
                 } else {
-                    return redirect(url('/'))->with('error', 'datempy');
+                    return redirect(url('/'))->with('error', 'dateempty');
                 }
             }
             // dd($request->to);
@@ -129,46 +129,134 @@ class ItineratyController extends Controller
         return redirect(route('itineraty.list'))->with('delete', 'ok');
     }
 
+    private function getToday()
+    {
+        return Carbon::createFromFormat('m/d/Y H:i', date('m/d/Y H:i'));
+    }
+
     public function landing()
     {
         if (Auth::user() != null && Auth::user()->hasRole('client')) {
             $ship_id = Ship::where("user_id", Auth::user()->id)->first()->id;
-            if ($ship_id != null) {
-                $itineraty = Itineraty::where("ship_id", $ship_id)->first();
-                $today = date('m/d/Y H:i');
-                // $today = date('03/15/2022 15:00');
-                $date = Carbon::createFromFormat('m/d/Y H:i', $today);
-                $costEstimated = 100 * ($date->floatDiffInDays($itineraty->date_estimated_takeoff));
-                $itineraty->update([
-                    'date_landing' => $date,
-                    'status' => 'landed',
-                    'price' => $costEstimated,
-                ]);
-                // dd($date, $itineraty);
 
-                if ($date <= $itineraty->date_estimated_landing) {
+            if ($ship_id != null) {
+                // $itineraty = Itineraty::where("ship_id", $ship_id)->first();
+                $itineraty = Itineraty::where('ship_id', $ship_id)->where(function ($query) {
+                    $query->where('status', 'pending')
+                        ->orWhere('status', 'accepted')
+                        ->orWhere('status', 'landed');
+                })->first();
+
+                $date = $this->getToday();
+
+
+                if ($this->checkLanding($date, $itineraty)) {
                     return redirect(url('/'))->with('success', 'landing');
                 } else {
-                    // dd($itineraty->date_estimated_landing);
-                    $subsDays = $itineraty->date_estimated_landing->floatDiffInDays($date);
-                    $cost = $subsDays * (($itineraty->price * 0.2) + $itineraty->price);
-                    $total = $cost + $itineraty->price;
-                    $itineraty->update([
-                        'price' => $total,
-                    ]);
-
-                    Penalty::create([
-                        'price' => $cost,
-                        'comments' => 'Days Later' . round($subsDays, 2),
-                        'user_id' => Auth::user()->id,
-                        'itineraty_id' => $itineraty->id,
-                    ]);
-
-                    return redirect(url('/'))->with('success', 'landingPenalt');
+                    $this->createPenalty($date, $itineraty);
+                    return redirect(url('/'))->with('success', 'landingPenalty');
                 }
             } else {
                 return redirect(url('/'))->with('error', 'notship');
             }
         }
+    }
+
+    private function checkLanding(Carbon $date, Itineraty $itineraty)
+    {
+        $costEstimated = 100 * ($date->floatDiffInDays($itineraty->date_estimated_takeoff));
+        $itineraty->update([
+            'date_landing' => $date,
+            'status' => 'landed',
+            'price' => $costEstimated,
+        ]);
+        return ($date <= $itineraty->date_estimated_landing);
+    }
+
+    private function createPenaltyTime(Carbon $date, Itineraty $itineraty, $status = "landing")
+    {
+        $subsMinutes = $itineraty->date_estimated_landing->floatDiffInMinutes($date);
+        if ($status == "takeoff") {
+            $subsMinutes = $itineraty->date_estimated_takeoff->floatDiffInMinutes($date);
+        }
+        $cost = ($subsMinutes * (($itineraty->price * 0.000002) + $itineraty->price)) / 100;
+        return [
+            'total' => $cost + $itineraty->price,
+            'cost' => $cost,
+            'minutes' => $subsMinutes,
+        ];
+    }
+
+    private function createPenalty(Carbon $date, Itineraty $itineraty)
+    {
+        $time = $this->createPenaltyTime($date, $itineraty);
+
+        $itineraty->update([
+            'price' => $time['total'],
+        ]);
+
+        return Penalty::create([
+            'price' => $time['cost'],
+            'comments' => 'Minutes Later: ' . round($time['minutes'], 2),
+            'user_id' => Auth::user()->id,
+            'itineraty_id' => $itineraty->id,
+        ]);
+    }
+
+
+
+    public function takeoff()
+    {
+        if (Auth::user() != null && Auth::user()->hasRole('client')) {
+            $ship_id = Ship::where("user_id", Auth::user()->id)->first()->id;
+            if ($ship_id != null) {
+                // $itineraty = Itineraty::where("ship_id", $ship_id)->first();
+
+                $itineraty = Itineraty::where('ship_id', $ship_id)->where(function ($query) {
+                    $query->where('status', 'pending')
+                        ->orWhere('status', 'accepted')
+                        ->orWhere('status', 'landed');
+                })->first();
+
+                $date = $this->getToday();
+                $itineraty->update([
+                    'date_takeoff' => $date,
+                    'status' => 'done',
+                ]);
+
+
+                if ($date <= $itineraty->date_estimated_takeoff) {
+                    return redirect(url('/'))->with('success', 'takeoff');
+                } else {
+                    $penalty = Penalty::where('itineraty_id', $itineraty->id)->first();
+                    if ($penalty == null) {
+                        $this->createPenalty($date, $itineraty);
+                    } else {
+                        $time = $this->createPenaltyTime($date, $itineraty, "takeoff");
+
+                        $itineraty->update([
+                            'price' => $time['total'],
+                        ]);
+
+                        $comments = $penalty->comments;
+                        $penalty->update([
+                            'price' => $time['cost'],
+                            'comments' => $comments . ' Minutes Later: ' . round($time['minutes'], 2),
+                        ]);
+                    }
+
+                    return redirect(url('/'))->with('success', 'takeoffPenalty');
+                }
+            } else {
+                return redirect(url('/'))->with('error', 'notship');
+            }
+        }
+    }
+
+    public function showClient()
+    {
+        $ship_id = Ship::where("user_id", Auth::user()->id)->first()->id;
+        $itineraties = Itineraty::where("ship_id", $ship_id)->paginate(10);
+        return view('client.itineraties.list', compact('itineraties'));
     }
 }

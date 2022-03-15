@@ -44,6 +44,8 @@
                         <option value="expectation" selected>Expectation</option>
                         <option value="accepted">Accepted</option>
                         <option value="refused">Refused</option>
+                        <option value="landed">Landed</option>
+                        <option value="done">Done</option>
                     </select>
                 </div>
 

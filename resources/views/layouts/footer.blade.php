@@ -1,4 +1,4 @@
-<footer class="bg-light text-center text-lg-start">
+<footer class="bg-light text-center text-lg-start" style="background-color: rgba(0, 0, 0, 0.2) !important; margin-top: 50px">
     <!-- Grid container -->
     <div class="container p-4">
         <!--Grid row-->
