@@ -3,7 +3,7 @@
 @section('content')
     <h1 style="text-align: center;">Ships: {{ $ship->id }}</h1>
     <div class="container">
-        <form method="POST" action="{{ route('ship.update', $ship->id) }}">
+        <form enctype="multipart/form-data" method="POST" action="{{ route('ship.update', $ship->id) }}">
             <div class="container">
                 @csrf
                 <div>
@@ -26,7 +26,6 @@
                 <div>
                     <label for="image">Image</label>
                     <input type="file" id="image" name="image" accept="image/*">
-                    <input type="hidden" id="oldImage" name="oldImage" value="{{ $ship->image }}">
                     <br/>
                     @error('image')
                         <small class="text-danger">{{ $message }}</small>

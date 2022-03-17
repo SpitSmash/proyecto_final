@@ -44,7 +44,6 @@
                         Request Landing
                     </button>
                 @endif
-
             </div>
             <div class="row">
                 @if ($requested == 'none')
@@ -113,27 +112,43 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="col-4"></div>
+                    <div class="row">
+                        @if (@Auth::user() != null)
+                            @if (@Auth::user()->hasRole('client'))
+                                <div class="col-1 container">
+                                        <a class="btn btn-primary btn-lg" href="{{ route('client.create') }}">Registrer
+                                            Ship</a>
+                                </div>
+                            @endif
+                        @endif
+                    </div>
                 @endif
 
             </div>
         </form>
+
+
+
         <div class="row">
             <div class="col-3"></div>
             @if ($requested == 'accepted')
                 <div class="col-3">
-                    <a class="btn btn-outline-primary col-12 userActions" href="{{ route('landing') }}"> LANDING </a>
+                    <a class="btn btn-outline-primary col-12 userActions" href="{{ route('landing') }}"> LANDING
+                    </a>
                 </div>
                 <div class="col-3">
-                    <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> TAKEOFF </a>
+                    <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> TAKEOFF
+                    </a>
                 </div>
             @endif
             @if ($requested == 'landed')
                 <div class="col-3">
-                    <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> LANDING </a>
+                    <a class="btn btn-outline-primary col-12 userActions disabled" aria-disabled="true"> LANDING
+                    </a>
                 </div>
                 <div class="col-3">
-                    <a class="btn btn-outline-primary col-12 userActions" href="{{ route('takeoff') }}"> TAKEOFF </a>
+                    <a class="btn btn-outline-primary col-12 userActions" href="{{ route('takeoff') }}"> TAKEOFF
+                    </a>
                 </div>
             @endif
         </div>
@@ -141,7 +156,7 @@
         <div class="row">
             <div class="ratio ratio-16x9">
                 <video width="800" height="380" autoplay="autoplay" loop="loop" controls="controls" muted="muted">
-                    <source src="{{ asset('video/OrisonLandingZon.webm') }}" type="video/webm">
+                    <source src="{{ asset('video/OrisonLandingZon.mp4') }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>

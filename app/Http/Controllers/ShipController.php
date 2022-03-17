@@ -20,9 +20,14 @@ class ShipController extends Controller
         return view('admin.ships.create');
     }
 
+    public function create2()
+    {
+        return view('client.registrer');
+    }
+
     public function store(Request $request)
     {
-       
+
         $request->validate([
             'image' => 'required|image|max:2048',
         ]);
@@ -40,6 +45,26 @@ class ShipController extends Controller
         return redirect(route('ship.list'));
     }
 
+    public function store2(Request $request)
+    {
+
+        $request->validate([
+            'image' => 'required|image|max:2048',
+        ]);
+        $image = $request->file('image')->store('public/images');
+        $url = Storage::url($image);
+
+        Ship::create([
+            'name' => $request->name,
+            'user_id' => $request->user_id,
+            'description' => $request->description,
+            'type' => $request->type,
+            'status' => $request->status,
+            'image' => $url,
+        ]);
+        return view('index',['requested' => 'none']);
+    }
+
     public function edit(Ship $ship)
     {
         return view('admin.ships.edit', compact('ship'));
@@ -47,32 +72,19 @@ class ShipController extends Controller
 
     public function update(Request $request, Ship $ship)
     {
+        $data = $request->all();
+
         if ($request->image != null) {
             $request->validate([
-                'image' => 'required|image|max:2048',
+                'image' => 'image|max:2048',
             ]);
             $image = $request->file('image')->store('public/images');
-            $url = Storage::url($image);
-            $ship->update([
-                'name' => $request->name,
-                'user_id' => $request->user_id,
-                'description' => $request->description,
-                'type' => $request->type,
-                'status' => $request->status,
-                'image' => $url,
-            ]);
-            return redirect(route('ship.list'));
-        } else {
-            $ship->update([
-                'name' => $request->name,
-                'user_id' => $request->user_id,
-                'description' => $request->description,
-                'type' => $request->type,
-                'status' => $request->status,
-                'image' => $request->oldImage,
-            ]);
-            return redirect(route('ship.list'));
+            $data['image'] = Storage::url($image); 
         }
+        // dd($data);
+        $ship->update($data);
+
+        return redirect(route('ship.list'));
     }
 
     public function destroyer(Ship $ship)
@@ -90,7 +102,8 @@ class ShipController extends Controller
         return back();
     }
 
-    public function showClient(){
+    public function showClient()
+    {
         $ships = Ship::where("user_id", Auth::user()->id)->paginate(10);
         return view('client.ships.list', compact('ships'));
     }

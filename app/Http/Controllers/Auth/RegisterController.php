@@ -55,13 +55,6 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-
-            'ship_name' => ['required', 'string', 'max:255'],
-            'ship_description' => ['required', 'string', 'max:255'],
-            'ship_type' => ['required', 'string', 'max:255'],
-            'ship_status' => ['required', 'string', 'max:255'],
-            // 'ship_image' => ['required', 'image', 'max:2048'],
-
         ]);
     }
 
@@ -73,17 +66,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // $image = $data['ship_image']->file('image')->store('public/images');
-        // $url = Storage::url($image);
-
-        Ship::create([
-            'name' => $data['ship_name'],
-            'description' => $data['ship_description'],
-            'type' => $data['ship_type'],
-            'status' => $data['ship_status'],
-            // 'image' => $url,
-        ]);
-
+       
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

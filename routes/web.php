@@ -58,7 +58,8 @@ Auth::routes();
 
 //accebility routes for clients
 Route::group(['middleware' => ['role:client']], function () {
-
+    Route::get('/client/registrer', [ShipController::class, 'create2'])->name('client.create');
+    Route::post('/client/registrer', [ShipController::class, 'store2'])->name('client.store');
     Route::get('/client/itineraties/list', [ItineratyController::class, 'showClient'])->name('client.itineraty');
     Route::get('/client/ships/list', [ShipController::class, 'showClient'])->name('client.ship');
     Route::get('/client/penalties/list', [PenaltyController::class, 'showClient'])->name('client.penalty');
